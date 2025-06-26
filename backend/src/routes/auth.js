@@ -7,6 +7,7 @@ const router = express.Router();
 
 // POST /api/auth/register
 router.post('/register', async (req, res) => {
+  console.log('register hit, body:', req.body);
   try {
     const { name, email, password } = req.body;
     // basic validation
