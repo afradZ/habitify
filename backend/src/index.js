@@ -33,4 +33,7 @@ app.set('json spaces', 2);
 app.use(express.json());
 // … mount routers, etc.
 
-// This code initializes an Express server, connects to a MongoDB database using Mongoose, and sets up a basic route that responds with a message when accessed. The server listens on a specified port, defaulting to 5000 if not provided in the environment variables.
+const tasksRouter = require('./routes/tasks');
+app.use('/api/tasks', tasksRouter);
+
+ app.get('/', (req, res) => res.send('Habitify API running'));
