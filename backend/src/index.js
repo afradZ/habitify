@@ -1,42 +1,35 @@
+// backend/src/index.js
+
 require('dotenv').config();
-const express = require('express');
-const cors = require('cors');
-const connectDB = require('./config/db');
+const express          = require('express');
+const cors             = require('cors');
+const connectDB        = require('./config/db');
+
+// Routers
+const authRouter       = require('./routes/auth');
+const tasksRouter      = require('./routes/tasks');
+const habitsRouter     = require('./routes/habits');
+const analyticsRouter  = require('./routes/analytics');
 
 const app = express();
 connectDB();
 
-// middleware
+// CORS & body parsing
 app.use(cors({
   origin: 'http://localhost:3000',
   credentials: true
 }));
-
-// parse JSON bodies
 app.use(express.json());
 
-// mount auth routes
-const authRouter = require('./routes/auth');
-app.use('/api/auth', authRouter);
+// Mount API routes
+app.use('/api/auth',      authRouter);
+app.use('/api/tasks',     tasksRouter);
+app.use('/api/habits',    habitsRouter);
+app.use('/api/analytics', analyticsRouter);
 
-// simple test
-app.get('/', (req, res) => {
-  res.send('Habitify API running');
-});
+// Health check
+app.get('/', (req, res) => res.send('Habitify API running'));
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
 
-// after creating app, before any routes:
-app.set('json spaces', 2);
-
-app.use(express.json());
-// … mount routers, etc.
-
-const tasksRouter = require('./routes/tasks');
-app.use('/api/tasks', tasksRouter);
-
- app.get('/', (req, res) => res.send('Habitify API running'));
-
- const habitsRouter = require('./routes/habits');
- app.use('/api/habits', habitsRouter);
