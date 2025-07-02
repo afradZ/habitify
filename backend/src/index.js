@@ -37,3 +37,6 @@ const tasksRouter = require('./routes/tasks');
 app.use('/api/tasks', tasksRouter);
 
  app.get('/', (req, res) => res.send('Habitify API running'));
+
+ const habitsRouter = require('./routes/habits');
+ app.use('/api/habits', habitsRouter);
