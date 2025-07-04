@@ -1,4 +1,3 @@
-// frontend/src/App.js
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
@@ -7,6 +6,7 @@ import Login        from './pages/login';
 import Tasks        from './pages/Tasks';
 import Habits       from './pages/Habits';
 import PrivateRoute from './components/PrivateRoute';
+import Stats        from './pages/Stats';
 
 function App() {
   return (
@@ -30,6 +30,14 @@ function App() {
           element={
             <PrivateRoute>
               <Habits />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/stats"
+          element={
+            <PrivateRoute>
+              <Stats />
             </PrivateRoute>
           }
         />
