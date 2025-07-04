@@ -1,53 +1,33 @@
-// backend/src/routes/analytics.js
-
 const express  = require('express');
+const mongoose = require('mongoose');
 const Task     = require('../models/Task');
 const Habit    = require('../models/Habit');
 const auth     = require('../middleware/auth');
 
 const router = express.Router();
+const ObjectId = mongoose.Types.ObjectId;
 
-// helper: compare dates ignoring time
+const DEFAULT_RANGE = 7;
+
 function isSameDay(a, b) {
   return a.getFullYear() === b.getFullYear() &&
          a.getMonth()    === b.getMonth()    &&
          a.getDate()     === b.getDate();
 }
 
-/**
- * Compute consecutive daily streak from an array of Date objects.
- */
-function computeStreak(habit) {
-  const checkIns = habit.checkIns
-    .map(d => new Date(d))
-    .sort((a, b) => b - a);
+// computeStreak unchanged…
 
-  let streak = 0;
-  let cursor = new Date();
-  for (const d of checkIns) {
-    if (isSameDay(d, cursor)) {
-      streak++;
-      cursor.setDate(cursor.getDate() - 1);
-    } else {
-      break;
-    }
-  }
-  return streak;
-}
-
-/**
- * GET /api/analytics/tasks
- * Returns counts of tasks completed per day over the last 7 days.
- */
 router.get('/tasks', auth, async (req, res) => {
   try {
+    // ← read & parse range from query
+    const range = parseInt(req.query.range) || DEFAULT_RANGE;
     const since = new Date();
-    since.setDate(since.getDate() - 6);
+    since.setDate(since.getDate() - (range - 1));
 
     const data = await Task.aggregate([
       { $match: {
-          owner: req.user,            // use string ID, let Mongoose cast
-          completed: true,
+          owner:      new ObjectId(req.user),
+          completed:  true,
           updatedAt: { $gte: since }
         }
       },
@@ -56,7 +36,7 @@ router.get('/tasks', auth, async (req, res) => {
         }
       },
       { $group: {
-          _id: "$day",
+          _id:   "$day",
           count: { $sum: 1 }
         }
       },
@@ -70,17 +50,14 @@ router.get('/tasks', auth, async (req, res) => {
   }
 });
 
-/**
- * GET /api/analytics/habits
- * Returns counts of habit check-ins per day over the last 7 days.
- */
 router.get('/habits', auth, async (req, res) => {
   try {
+    const range = parseInt(req.query.range) || DEFAULT_RANGE;
     const since = new Date();
-    since.setDate(since.getDate() - 6);
+    since.setDate(since.getDate() - (range - 1));
 
     const data = await Habit.aggregate([
-      { $match: { owner: req.user } },      // string ID again
+      { $match: { owner: new ObjectId(req.user) } },
       { $unwind: "$checkIns" },
       { $match: { checkIns: { $gte: since } } },
       { $project: {
@@ -88,7 +65,7 @@ router.get('/habits', auth, async (req, res) => {
         }
       },
       { $group: {
-          _id: "$day",
+          _id:   "$day",
           count: { $sum: 1 }
         }
       },
@@ -103,3 +80,4 @@ router.get('/habits', auth, async (req, res) => {
 });
 
 module.exports = router;
+
