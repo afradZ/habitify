@@ -1,4 +1,3 @@
-// backend/src/routes/habits.js
 const express = require('express');
 const mongoose = require('mongoose');
 const Habit   = require('../models/Habit');
