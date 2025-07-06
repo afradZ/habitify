@@ -1,6 +1,8 @@
-import React, { useContext, useEffect, useState } from 'react';
+// frontend/src/pages/Stats.js
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { Line }        from 'react-chartjs-2';
+import Goals           from '../components/Goals';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -40,15 +42,14 @@ export default function Stats() {
   const { auth } = useContext(AuthContext);
   const token    = auth.token;
 
-  // ← NEW: range state (7 or 30 days)
   const [rangeDays, setRangeDays] = useState(7);
-
   const [taskData, setTaskData]   = useState({ labels: [], counts: [] });
   const [habitData, setHabitData] = useState({ labels: [], counts: [] });
   const [loading, setLoading]     = useState(true);
   const [error, setError]         = useState(null);
 
-  async function fetchAnalytics() {
+  // wrap in useCallback so it can be a dependency
+  const fetchAnalytics = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
@@ -65,12 +66,12 @@ export default function Stats() {
     } finally {
       setLoading(false);
     }
-  }
+  }, [token, rangeDays]);
 
-  // ← REFRESH on mount & whenever token or rangeDays changes
+  // fetch analytics on mount and when rangeDays changes
   useEffect(() => {
     fetchAnalytics();
-  }, [token, rangeDays]);
+  }, [fetchAnalytics]);
 
   if (loading) return <p>Loading analytics…</p>;
   if (error)   return <p>{error}</p>;
@@ -86,7 +87,10 @@ export default function Stats() {
     <div style={{ padding: '1rem' }}>
       <h1>Statistics</h1>
 
-      {/* ← NEW: toggle dropdown */}
+      {/* Show Goals summary here */}
+      <Goals />
+
+      {/* range selector */}
       <label style={{ marginBottom: '1rem', display: 'block' }}>
         Show last{' '}
         <select
@@ -102,18 +106,19 @@ export default function Stats() {
         <Line
           data={{
             labels: taskData.labels,
-            datasets: [
-              {
-                label: 'Tasks Completed',
-                data: taskData.counts,
-                fill: false,
-                tension: 0.3
-              }
-            ]
+            datasets: [{
+              label: 'Tasks Completed',
+              data: taskData.counts,
+              fill: false,
+              tension: 0.3
+            }]
           }}
           options={{
             ...commonOptions,
-            title: { display: true, text: `Tasks (Last ${rangeDays} Days)` }
+            title: {
+              display: true,
+              text: `Tasks (Last ${rangeDays} Days)`
+            }
           }}
         />
       </div>
@@ -122,18 +127,19 @@ export default function Stats() {
         <Line
           data={{
             labels: habitData.labels,
-            datasets: [
-              {
-                label: 'Habit Check-ins',
-                data: habitData.counts,
-                fill: false,
-                tension: 0.3
-              }
-            ]
+            datasets: [{
+              label: 'Habit Check-ins',
+              data: habitData.counts,
+              fill: false,
+              tension: 0.3
+            }]
           }}
           options={{
             ...commonOptions,
-            title: { display: true, text: `Habits (Last ${rangeDays} Days)` }
+            title: {
+              display: true,
+              text: `Habits (Last ${rangeDays} Days)`
+            }
           }}
         />
       </div>
