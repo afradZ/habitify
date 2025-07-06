@@ -62,7 +62,7 @@ export default function Tasks() {
   if (error)   return <p>Error: {error}</p>;
 
   return (
-    <div style={{ padding: '1rem' }}>
+    <div className="page">
       <h1>Your Tasks</h1>
 
       {/* Create or Edit form */}

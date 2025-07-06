@@ -36,7 +36,7 @@ export default function Habits() {
   if (error)   return <p>Error: {error}</p>;
 
   return (
-    <div style={{ padding: '1rem' }}>
+    <div className="page form-page">
       <h1>Your Habits</h1>
       <HabitForm onSubmit={handleAdd} />
 

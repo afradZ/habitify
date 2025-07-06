@@ -84,7 +84,7 @@ export default function Stats() {
   };
 
   return (
-    <div style={{ padding: '1rem' }}>
+    <div className="page">
       <h1>Statistics</h1>
 
       {/* Show Goals summary here */}

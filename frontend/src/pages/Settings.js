@@ -41,7 +41,7 @@ export default function Settings() {
   }
 
   return (
-    <div style={{ padding: '1rem', maxWidth: 400, margin: '0 auto' }}>
+    <div className="page">
       <h1>Reminder & Goal Settings</h1>
       <form onSubmit={handleSubmit}>
         <label style={{ display: 'block', marginBottom: '1rem' }}>
