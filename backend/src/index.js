@@ -1,5 +1,3 @@
-// backend/src/index.js
-
 require('dotenv').config();
 const express          = require('express');
 const cors             = require('cors');
@@ -10,9 +8,12 @@ const authRouter       = require('./routes/auth');
 const tasksRouter      = require('./routes/tasks');
 const habitsRouter     = require('./routes/habits');
 const analyticsRouter  = require('./routes/analytics');
+const settingsRouter   = require('./routes/settings');
+const scheduleReminders = require('./utils/reminders');
 
 const app = express();
 connectDB();
+scheduleReminders();
 
 // CORS & body parsing
 app.use(cors({
@@ -26,6 +27,7 @@ app.use('/api/auth',      authRouter);
 app.use('/api/tasks',     tasksRouter);
 app.use('/api/habits',    habitsRouter);
 app.use('/api/analytics', analyticsRouter);
+app.use('/api/settings',  settingsRouter);
 
 // Health check
 app.get('/', (req, res) => res.send('Habitify API running'));
