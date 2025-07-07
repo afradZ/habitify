@@ -162,3 +162,26 @@ button:disabled {
   height: 1rem;
 }
 
+/* ensure nav is a flex row and items align nicely */
+.app-nav {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing);
+}
+
+.nav-logout {
+  margin-left: auto;
+  background: transparent;
+  border: none;
+  color: var(--color-primary);
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius);
+  transition: background 0.2s, color 0.2s;
+}
+
+.nav-logout:hover {
+  background: var(--color-secondary);
+  color: #fff;
+}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate, Link } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate} from 'react-router-dom';
 import './App.css';
 
 import Register     from './pages/register';
@@ -10,17 +10,14 @@ import Stats        from './pages/Stats';
 import Settings     from './pages/Settings';
 import PrivateRoute from './components/PrivateRoute';
 import Landing      from './pages/Landing';
+import Navbar from './components/Navbar';
 
 function App() {
   return (
     <BrowserRouter>
-      {/* site-wide nav bar */}
-      <nav className="app-nav">
-        <Link to="/tasks">Tasks</Link>
-        <Link to="/habits">Habits</Link>
-        <Link to="/stats">Stats</Link>
-        <Link to="/settings">Settings</Link>
-      </nav>
+      <Navbar />
+      
+      {/* Main Routes */}
 
       <Routes>
         {/* Landing Page */}
