@@ -6,46 +6,50 @@ export default function Settings() {
   const { auth } = useContext(AuthContext);
   const token    = auth.token;
 
-  // initial form state, must match your schema defaults
+  // 1) State keys exactly match your backend API (now expecting full "HH:MM" strings)
   const [form, setForm] = useState({
     taskReminderTime:  '08:00',
     habitReminderTime: '08:00',
-    monthlyTaskGoal:   20,
-    monthlyHabitGoal:  30
+    monthlyTaskGoal:   '20',      // still strings so they never become undefined
+    monthlyHabitGoal:  '30'
   });
 
-  // load existing settings on mount
+  // 2) Load existing settings
   useEffect(() => {
     fetchSettings(token).then(res => {
       setForm({
-        taskReminderTime:  res.data.taskReminderTime,
-        habitReminderTime: res.data.habitReminderTime,
-        monthlyTaskGoal:   res.data.monthlyTaskGoal,
-        monthlyHabitGoal:  res.data.monthlyHabitGoal
+        taskReminderTime:  res.data.taskReminderTime  || '08:00',
+        habitReminderTime: res.data.habitReminderTime || '08:00',
+        monthlyTaskGoal:   String(res.data.monthlyTaskGoal  ?? '20'),
+        monthlyHabitGoal:  String(res.data.monthlyHabitGoal ?? '30')
       });
     });
   }, [token]);
 
-  // handle any change in the form inputs
   function handleChange(e) {
     const { name, value } = e.target;
     setForm(f => ({ ...f, [name]: value }));
   }
 
-  // submit updated settings
   function handleSubmit(e) {
     e.preventDefault();
-    updateSettings(token, form)
+    // 3) Send the form values directly; backend can split at ":" if needed
+    updateSettings(token, {
+      taskReminderTime:  form.taskReminderTime,
+      habitReminderTime: form.habitReminderTime,
+      monthlyTaskGoal:   parseInt(form.monthlyTaskGoal, 10),
+      monthlyHabitGoal:  parseInt(form.monthlyHabitGoal,  10)
+    })
       .then(() => alert('Settings saved'))
       .catch(() => alert('Failed to save settings'));
   }
 
   return (
-    <div className="page">
+    <div className="page form-page">
       <h1>Reminder & Goal Settings</h1>
       <form onSubmit={handleSubmit}>
-        <label style={{ display: 'block', marginBottom: '1rem' }}>
-          Task reminder time:
+        <label>
+          Task reminder time
           <input
             type="time"
             name="taskReminderTime"
@@ -55,8 +59,8 @@ export default function Settings() {
           />
         </label>
 
-        <label style={{ display: 'block', marginBottom: '1rem' }}>
-          Habit reminder time:
+        <label>
+          Habit reminder time
           <input
             type="time"
             name="habitReminderTime"
@@ -66,8 +70,8 @@ export default function Settings() {
           />
         </label>
 
-        <label style={{ display: 'block', marginBottom: '1rem' }}>
-          Monthly task goal:
+        <label>
+          Monthly task goal
           <input
             type="number"
             name="monthlyTaskGoal"
@@ -78,8 +82,8 @@ export default function Settings() {
           />
         </label>
 
-        <label style={{ display: 'block', marginBottom: '1rem' }}>
-          Monthly habit goal:
+        <label>
+          Monthly habit goal
           <input
             type="number"
             name="monthlyHabitGoal"
@@ -95,5 +99,6 @@ export default function Settings() {
     </div>
   );
 }
+
 
 

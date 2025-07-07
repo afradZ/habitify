@@ -1,8 +1,9 @@
-// frontend/src/pages/Stats.js
+// src/pages/Stats.js
 import React, { useCallback, useContext, useEffect, useState } from 'react';
-import { AuthContext } from '../context/AuthContext';
-import { Line }        from 'react-chartjs-2';
-import Goals           from '../components/Goals';
+import { AuthContext }  from '../context/AuthContext';
+import { ThemeContext } from '../context/ThemeContext';
+import { Line }         from 'react-chartjs-2';
+import Goals            from '../components/Goals';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -39,14 +40,23 @@ function makeSeries(arr, days) {
 }
 
 export default function Stats() {
-  const { auth } = useContext(AuthContext);
-  const token    = auth.token;
+  const { auth }    = useContext(AuthContext);
+  const { theme }   = useContext(ThemeContext);
+  const token       = auth.token;
 
   const [rangeDays, setRangeDays] = useState(7);
-  const [taskData, setTaskData]   = useState({ labels: [], counts: [] });
+  const [taskData,  setTaskData]  = useState({ labels: [], counts: [] });
   const [habitData, setHabitData] = useState({ labels: [], counts: [] });
-  const [loading, setLoading]     = useState(true);
-  const [error, setError]         = useState(null);
+  const [loading,   setLoading]   = useState(true);
+  const [error,     setError]     = useState(null);
+
+  // Dark-mode colors
+  const rootStyles   = getComputedStyle(document.documentElement);
+  const textColor    = rootStyles.getPropertyValue('--color-text').trim();
+  const primaryColor = rootStyles.getPropertyValue('--color-primary').trim();
+  const gridColor    = theme === 'dark'
+    ? 'rgba(255, 255, 255, 0.44)'
+    : 'rgba(0,0,0,0.1)';
 
   // wrap in useCallback so it can be a dependency
   const fetchAnalytics = useCallback(async () => {
@@ -55,8 +65,8 @@ export default function Stats() {
     try {
       const headers = { Authorization: `Bearer ${token}` };
       const [tRes, hRes] = await Promise.all([
-        fetch(`http://localhost:5000/api/analytics/tasks?range=${rangeDays}`, { headers }).then(r => r.json()),
-        fetch(`http://localhost:5000/api/analytics/habits?range=${rangeDays}`, { headers }).then(r => r.json())
+        fetch(`/api/analytics/tasks?range=${rangeDays}`, { headers }).then(r => r.json()),
+        fetch(`/api/analytics/habits?range=${rangeDays}`, { headers }).then(r => r.json())
       ]);
       setTaskData(makeSeries(tRes, rangeDays));
       setHabitData(makeSeries(hRes, rangeDays));
@@ -79,19 +89,32 @@ export default function Stats() {
   const commonOptions = {
     responsive: true,
     plugins: {
-      legend: { position: 'top' }
+      legend: {
+        position: 'top',
+        labels: { color: textColor }
+      }
+    },
+    scales: {
+      x: {
+        ticks: { color: textColor },
+        grid:  { color: gridColor }
+      },
+      y: {
+        ticks: { color: textColor },
+        grid:  { color: gridColor }
+      }
     }
   };
 
   return (
     <div className="page">
-      <h1>Statistics</h1>
+      <h1 style={{ color: textColor }}>Statistics</h1>
 
-      {/* Show Goals summary here */}
+      {/* This Month’s Progress */}
       <Goals />
 
       {/* range selector */}
-      <label style={{ marginBottom: '1rem', display: 'block' }}>
+      <label style={{ marginBottom: '1rem', display: 'block', color: textColor }}>
         Show last{' '}
         <select
           value={rangeDays}
@@ -102,43 +125,55 @@ export default function Stats() {
         </select>
       </label>
 
+      {/* Tasks Completed Chart */}
       <div style={{ maxWidth: 700, margin: '2rem auto' }}>
         <Line
           data={{
             labels: taskData.labels,
             datasets: [{
-              label: 'Tasks Completed',
-              data: taskData.counts,
-              fill: false,
-              tension: 0.3
+              label:           'Tasks Completed',
+              data:            taskData.counts,
+              borderColor:     primaryColor,
+              backgroundColor: 'transparent',
+              tension:         0.3
             }]
           }}
           options={{
             ...commonOptions,
-            title: {
-              display: true,
-              text: `Tasks (Last ${rangeDays} Days)`
+            plugins: {
+              ...commonOptions.plugins,
+              title: {
+                display: true,
+                text:    `Tasks (Last ${rangeDays} Days)`,
+                color:   textColor
+              }
             }
           }}
         />
       </div>
 
+      {/* Habit Check-ins Chart */}
       <div style={{ maxWidth: 700, margin: '2rem auto' }}>
         <Line
           data={{
             labels: habitData.labels,
             datasets: [{
-              label: 'Habit Check-ins',
-              data: habitData.counts,
-              fill: false,
-              tension: 0.3
+              label:           'Habit Check-ins',
+              data:            habitData.counts,
+              borderColor:     primaryColor,
+              backgroundColor: 'transparent',
+              tension:         0.3
             }]
           }}
           options={{
             ...commonOptions,
-            title: {
-              display: true,
-              text: `Habits (Last ${rangeDays} Days)`
+            plugins: {
+              ...commonOptions.plugins,
+              title: {
+                display: true,
+                text:    `Habits (Last ${rangeDays} Days)`,
+                color:   textColor
+              }
             }
           }}
         />

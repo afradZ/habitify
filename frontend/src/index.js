@@ -1,18 +1,21 @@
-// src/index.js
 import React from 'react';
-import { createRoot } from 'react-dom/client';
+import { createRoot } from 'react-dom/client';       
 import App from './App';
-import { AuthProvider } from './context/AuthContext';
+import { AuthProvider }   from './context/AuthContext';
+import { ThemeProvider }  from './context/ThemeContext';
+import './App.css';
 
 const container = document.getElementById('root');
-// React 18+: createRoot, then call root.render(...)
-const root = createRoot(container);
+const root = createRoot(container);                   // create a root
 
 root.render(
   <React.StrictMode>
-    <AuthProvider>
-      <App />
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <App />
+      </AuthProvider>
+    </ThemeProvider>
   </React.StrictMode>
 );
+
 
