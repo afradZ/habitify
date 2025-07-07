@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import logo from '../assets/habitify_logo_transparent.png';
 import {
   CheckBadgeIcon,
   CalendarDaysIcon,
@@ -12,7 +13,7 @@ export default function Landing() {
     <div className="landing">
       {/* top-right login link */}
       <nav className="landing-nav">
-        <div className="landing-logo">Habitify</div>
+        <img src={logo} alt="Habitify" className="landing-nav-logo" />
         <Link to="/login" className="btn-secondary nav-login">
           Log In
         </Link>
@@ -50,6 +51,16 @@ export default function Landing() {
 
       <footer className="landing-footer">
         <p>&copy; {new Date().getFullYear()} Habitify. All rights reserved.</p>
+        <p>
+          <a
+            href="https://github.com/afradZ"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="footer-github-link"
+          >
+            View on GitHub
+          </a>
+        </p>
       </footer>
     </div>
   );

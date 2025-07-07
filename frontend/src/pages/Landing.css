@@ -26,6 +26,10 @@
   color: #fff;
   text-shadow: 0 1px 4px rgba(0,0,0,0.4);
 }
+.landing-nav-logo {
+  height: 8rem;          /* adjust to taste */
+  margin-right: 2rem;
+}
 .nav-login {
   display: inline-flex;
   align-items: center;
@@ -49,7 +53,7 @@
 .landing-hero {
   position: relative;
   padding: calc(var(--spacing) * 6) var(--spacing) calc(var(--spacing) * 4);
-  background: linear-gradient(135deg, #4a90e2 0%, #50e3c2 100%);
+  background: linear-gradient(135deg, #72070c 0%, #5b2fc1 50%, #096d89 100%);
   color: #fff;
   text-align: center;
   clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
@@ -136,6 +140,16 @@
   background: var(--color-surface);
   font-size: 0.875rem;
   color: var(--color-muted);
+}
+.footer-github-link {
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.footer-github-link:hover {
+  color: var(--color-secondary);
+  text-decoration: underline;
 }
 
 /* ANIMATIONS */
