@@ -20,6 +20,7 @@ export default function Navbar() {
       <Link to="/stats">Stats</Link>
       <Link to="/settings">Settings</Link>
 
+
       {/* Theme toggle first, takes auto‐margin */}
       <button
         onClick={toggle}

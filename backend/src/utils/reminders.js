@@ -2,6 +2,7 @@ const cron  = require('node-cron');
 const User  = require('../models/User');
 const Task  = require('../models/Task');
 const Habit = require('../models/Habit');
+const { sendTaskReminder, sendHabitReminder } = require('./mailer');
 
 function sendEmail(to, subject, body) {
   console.log(`\n📧 To: ${to} — ${subject}\n${body}\n`);
@@ -59,4 +60,19 @@ module.exports = function scheduleReminders() {
   });
 
   console.log('🔔 Reminders scheduler started');
+};
+
+module.exports = function scheduleReminders() {
+  if (process.env.NODE_ENV === 'test') {
+    console.log('🔕 Skipping reminder scheduler in test env');
+    return;
+  }
+
+  console.log('🔔 Starting reminder scheduler');
+  // runs every minute for testing; revert to '0 * * * *' in prod
+  cron.schedule('* * * * *', async () => {
+    // …
+    await sendTaskReminder();
+    await sendHabitReminder();
+  });
 };
