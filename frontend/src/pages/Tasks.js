@@ -18,11 +18,18 @@ export default function Tasks() {
 
   // load tasks on mount
   useEffect(() => {
-    setLoading(true);
-    fetchTasks(token)
-      .then(res => setTasks(res.data))
-      .catch(err => setError(err.message))
-      .finally(() => setLoading(false));
+    async function load() {
+      setLoading(true);
+      try{
+        const res = await fetchTasks(token);
+        setTasks(res.data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+    load();
   }, [token]);
 
   function handleAdd(data) {

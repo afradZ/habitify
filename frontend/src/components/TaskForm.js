@@ -1,43 +1,37 @@
-import { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 
-const DEFAULT_FORM = {
-  title: '',
-  description: '',
-  dueDate: '',
-  recurrence: 'none'
-};
-
-export default function TaskForm({
-  initial,      // may be undefined or a task object
-  onSubmit,
-  submitLabel
-}) {
-  // Pick either the passed-in initial or our static default
-  const initialForm = useMemo(
-    () => initial ?? DEFAULT_FORM,
-    [initial]
-  );
-
-  // Only initialize from initialForm once, then update when it actually changes
-  const [form, setForm] = useState(initialForm);
+export default function TaskForm({ initial, onSubmit, submitLabel = 'Add Task' }) {
+  const [form, setForm] = useState({
+    title: initial?.title || '',
+    description: initial?.description || '',
+    // format initial.dueDate as YYYY-MM-DD or empty
+    dueDate: initial?.dueDate?.slice(0,10) || '',
+    recurrence: initial?.recurrence || 'none'
+  });
 
   useEffect(() => {
-    setForm(initialForm);
-  }, [initialForm]);
+    if (initial) {
+      setForm({
+        title:       initial.title,
+        description: initial.description,
+        dueDate:     initial.dueDate.slice(0,10),
+        recurrence:  initial.recurrence
+      });
+    }
+  }, [initial]);
 
   function handleChange(e) {
-    const { name, value, type, checked } = e.target;
-    setForm(f => ({
-      ...f,
-      [name]: type === 'checkbox' ? checked : value
-    }));
+    setForm(f => ({ ...f, [e.target.name]: e.target.value }));
   }
 
   function handleSubmit(e) {
     e.preventDefault();
-    onSubmit(form);
-    if (submitLabel === 'Add Task') {
-      setForm(DEFAULT_FORM);
+    onSubmit({
+      ...form,
+      dueDate: new Date(form.dueDate).toISOString()
+    });
+    if (!initial) {
+      setForm({ title:'', description:'', dueDate:'', recurrence:'none' });
     }
   }
 
@@ -61,7 +55,8 @@ export default function TaskForm({
       <input
         name="dueDate"
         type="date"
-        value={form.dueDate ? form.dueDate.slice(0, 10) : ''}
+        placeholder="Due date"
+        value={form.dueDate}
         onChange={handleChange}
         style={{ marginRight: '.5rem' }}
       />

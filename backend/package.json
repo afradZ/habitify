@@ -5,7 +5,19 @@
   "scripts": {
     "start": "node src/index.js",
     "dev": "nodemon src/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "cross-env NODE_ENV=test jest --detectOpenHandles --forceExit"
+  },
+  "jest": {
+    "testTimeout": 50000,
+    "setupFilesAfterEnv": [
+      "<rootDir>/jest.global.js"
+    ],
+    "testEnvironment": "node",
+    "resetMocks": true,
+    "coverageDirectory": "./coverage",
+    "testPathIgnorePatterns": [
+      "/node_modules/"
+    ]
   },
   "keywords": [],
   "author": "",
@@ -13,13 +25,20 @@
   "description": "",
   "dependencies": {
     "bcrypt": "^6.0.0",
+    "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
-    "dotenv": "^16.5.0",
+    "dotenv": "^16.6.1",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.16.0"
+    "mongoose": "^8.16.2",
+    "node-cron": "^4.2.0",
+    "nodemailer": "^7.0.5"
   },
   "devDependencies": {
-    "nodemon": "^3.1.10"
+    "cross-env": "^7.0.3",
+    "jest": "^30.0.4",
+    "mongodb-memory-server": "^10.1.4",
+    "nodemon": "^3.1.10",
+    "supertest": "^7.1.3"
   }
 }

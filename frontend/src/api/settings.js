@@ -3,7 +3,7 @@ import axios from 'axios';
 const BASE = '/api/settings';
 
 // GET current settings
-export function fetchSettings(token) {
+export function getSettings(token) {
   return axios.get(BASE, {
     headers: { Authorization: `Bearer ${token}` }
   });

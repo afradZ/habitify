@@ -1,22 +1,21 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { AuthContext }      from '../context/AuthContext';
-import { fetchSettings, updateSettings } from '../api/settings';
+import React, { useEffect, useState } from 'react';
+import { getSettings, updateSettings } from '../api/settings';
 
 export default function Settings() {
-  const { auth } = useContext(AuthContext);
-  const token    = auth.token;
+  const token    = localStorage.getItem('token');
 
-  // 1) State keys exactly match your backend API (now expecting full "HH:MM" strings)
+  // 1) State keys exactly match your backend API
   const [form, setForm] = useState({
     taskReminderTime:  '08:00',
     habitReminderTime: '08:00',
-    monthlyTaskGoal:   '20',      // still strings so they never become undefined
+    monthlyTaskGoal:   '20', // keep as strings for controlled inputs
     monthlyHabitGoal:  '30'
   });
 
-  // 2) Load existing settings
+  // 2) Load existing settings once we have a token
   useEffect(() => {
-    fetchSettings(token).then(res => {
+    if (!token) return;
+    getSettings(token).then(res => {
       setForm({
         taskReminderTime:  res.data.taskReminderTime  || '08:00',
         habitReminderTime: res.data.habitReminderTime || '08:00',
@@ -33,7 +32,6 @@ export default function Settings() {
 
   function handleSubmit(e) {
     e.preventDefault();
-    // 3) Send the form values directly; backend can split at ":" if needed
     updateSettings(token, {
       taskReminderTime:  form.taskReminderTime,
       habitReminderTime: form.habitReminderTime,
@@ -46,7 +44,7 @@ export default function Settings() {
 
   return (
     <div className="page form-page">
-      <h1>Reminder & Goal Settings</h1>
+      <h1>Reminder &amp; Goal Settings</h1>
       <form onSubmit={handleSubmit}>
         <label>
           Task reminder time
