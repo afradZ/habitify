@@ -1,4 +1,3 @@
-// src/pages/Stats.js
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { AuthContext }  from '../context/AuthContext';
 import { ThemeContext } from '../context/ThemeContext';
@@ -108,7 +107,7 @@ export default function Stats() {
 
   return (
     <div className="page">
-      <h1 style={{ color: textColor }}>Statistics</h1>
+      <h1 className="stats-header">Statistics</h1>
 
       {/* This Month’s Progress */}
       <Goals />

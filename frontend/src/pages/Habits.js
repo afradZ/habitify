@@ -40,7 +40,12 @@ export default function Habits() {
       <h1>Your Habits</h1>
       <HabitForm onSubmit={handleAdd} />
 
-      <table border="1" cellPadding="5" cellSpacing="0">
+      <table 
+        className="habits-table"
+        border="1"
+        cellPadding="8"
+        cellSpacing="0"
+      >
         <thead>
           <tr>
             <th>Habit</th>
